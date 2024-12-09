@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Restaurant.Core.Models;
+using Restaurant.DataAccess.Configurations;
 
 namespace Restaurant.DataAccess.Data
 {
-    public  class RestaurantDB: DbContext
+    public class RestaurantDB : DbContext
     {
         public DbSet<MenuItem> MenuItems { get; set; }
         public DbSet<OrderItem> OrderItems { get; set; }
@@ -20,7 +21,10 @@ namespace Restaurant.DataAccess.Data
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(MenuItem).Assembly);
+            modelBuilder.ApplyConfiguration(new OrderConfiguration());
+            modelBuilder.ApplyConfiguration(new OrderItemConfiguration());
+            modelBuilder.ApplyConfiguration(new MenuItemConfiguration());
         }
     }
 }
+    

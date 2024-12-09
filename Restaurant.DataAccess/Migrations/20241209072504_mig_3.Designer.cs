@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Restaurant.DataAccess.Data;
 
@@ -11,9 +12,11 @@ using Restaurant.DataAccess.Data;
 namespace Restaurant.DataAccess.Migrations
 {
     [DbContext(typeof(RestaurantDB))]
-    partial class RestaurantDBModelSnapshot : ModelSnapshot
+    [Migration("20241209072504_mig_3")]
+    partial class mig_3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

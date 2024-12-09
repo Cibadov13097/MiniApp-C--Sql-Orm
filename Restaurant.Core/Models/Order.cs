@@ -1,17 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Restaurant.Core.Models;
 
-namespace Restaurant.Core.Models
+public class Order
 {
-    public class Order
-    {
-        public int Id { get; set; }
-        public List<OrderItem> orderItems { get; set; }
-        public float Total_Price { get; set; }  
-
-        
-    }
+    public int Id { get; set; }
+    public List<OrderItem> OrderItems { get; set; }
+    public decimal TotalAmount { get; set; }    
+    public DateTime Date { get; set; }
 }

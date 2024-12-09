@@ -9,14 +9,12 @@ namespace Restaurant.Core.Models
     public class OrderItem
     {
         public int Id { get; set; }
-        public string Name { get; set; }
-        public float Price { get; set; }
+        public int Count { get; set; }
 
-        public int MenuItem { get; set; }
+        public int MenuItemId { get; set; }
         public int OrderId { get; set; }
-        public Order Order { get; set; }    
-        public MenuItem menuitem {get;set;}
-        
+        public MenuItem MenuItem { get; set; }
 
+        public Order Order { get; set; }
     }
 }

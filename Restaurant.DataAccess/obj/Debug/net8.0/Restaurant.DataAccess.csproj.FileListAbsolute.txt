@@ -32,3 +32,4 @@ C:\Users\User\source\repos\Restaurant\Restaurant.DataAccess\obj\Debug\net8.0\ref
 C:\Users\User\source\repos\Restaurant\Restaurant.DataAccess\obj\Debug\net8.0\Restaurant.DataAccess.pdb
 C:\Users\User\source\repos\Restaurant\Restaurant.DataAccess\obj\Debug\net8.0\Restaurant.DataAccess.genruntimeconfig.cache
 C:\Users\User\source\repos\Restaurant\Restaurant.DataAccess\obj\Debug\net8.0\ref\Restaurant.DataAccess.dll
+C:\Users\User\source\repos\Restaurant\Restaurant.DataAccess\obj\Debug\net8.0\Restaurant.DataAccess.sourcelink.json

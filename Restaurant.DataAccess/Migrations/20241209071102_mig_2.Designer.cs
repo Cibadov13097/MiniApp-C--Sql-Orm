@@ -12,7 +12,7 @@ using Restaurant.DataAccess.Data;
 namespace Restaurant.DataAccess.Migrations
 {
     [DbContext(typeof(RestaurantDB))]
-    [Migration("20241208154148_mig_2")]
+    [Migration("20241209071102_mig_2")]
     partial class mig_2
     {
         /// <inheritdoc />
@@ -24,6 +24,25 @@ namespace Restaurant.DataAccess.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Orders");
+                });
 
             modelBuilder.Entity("Restaurant.Core.Models.MenuItem", b =>
                 {
@@ -48,22 +67,6 @@ namespace Restaurant.DataAccess.Migrations
                     b.ToTable("MenuItems");
                 });
 
-            modelBuilder.Entity("Restaurant.Core.Models.Order", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<float>("Total_Price")
-                        .HasColumnType("real");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Orders");
-                });
-
             modelBuilder.Entity("Restaurant.Core.Models.OrderItem", b =>
                 {
                     b.Property<int>("Id")
@@ -72,18 +75,14 @@ namespace Restaurant.DataAccess.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("MenuItemId")
+                    b.Property<int>("Count")
                         .HasColumnType("int");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("OrderId")
+                    b.Property<int>("MenuItemId")
                         .HasColumnType("int");
 
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -96,23 +95,31 @@ namespace Restaurant.DataAccess.Migrations
 
             modelBuilder.Entity("Restaurant.Core.Models.OrderItem", b =>
                 {
-                    b.HasOne("Restaurant.Core.Models.MenuItem", null)
-                        .WithMany("Items")
-                        .HasForeignKey("MenuItemId");
+                    b.HasOne("Restaurant.Core.Models.MenuItem", "MenuItem")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("MenuItemId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("Restaurant.Core.Models.Order", null)
-                        .WithMany("orderItems")
-                        .HasForeignKey("OrderId");
+                    b.HasOne("Order", "Order")
+                        .WithMany("OrderItems")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MenuItem");
+
+                    b.Navigation("Order");
+                });
+
+            modelBuilder.Entity("Order", b =>
+                {
+                    b.Navigation("OrderItems");
                 });
 
             modelBuilder.Entity("Restaurant.Core.Models.MenuItem", b =>
                 {
-                    b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("Restaurant.Core.Models.Order", b =>
-                {
-                    b.Navigation("orderItems");
+                    b.Navigation("OrderItems");
                 });
 #pragma warning restore 612, 618
         }
