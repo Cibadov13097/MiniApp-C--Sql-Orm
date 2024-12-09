@@ -20,3 +20,12 @@ C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\Restau
 C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\refint\Restaurant.Service.dll
 C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\Restaurant.Service.pdb
 C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\ref\Restaurant.Service.dll
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\bin\Debug\net8.0\Restaurant.Service.runtimeconfig.json
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\bin\Debug\net8.0\Restaurant.Core.dll
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\bin\Debug\net8.0\Restaurant.DataAccess.dll
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\bin\Debug\net8.0\Restaurant.DataAccess.pdb
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\bin\Debug\net8.0\Restaurant.Core.pdb
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\Restaurant.Service.csproj.AssemblyReference.cache
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\Restaurant.Service.sourcelink.json
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\Restaura.AD9DA790.Up2Date
+C:\Users\User\source\repos\Restaurant\Restaurant.Service\obj\Debug\net8.0\Restaurant.Service.genruntimeconfig.cache
