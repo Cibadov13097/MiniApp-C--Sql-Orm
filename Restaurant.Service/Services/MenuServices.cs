@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using Restaurant.Core.Enums;
 using Restaurant.Core.Models;
 using Restaurant.DataAccess.Data;
@@ -63,10 +64,52 @@ public class MenuServices
         catch (Exception ex)
         {
             Console.WriteLine($"{ex.Message}");
-            if (ex.InnerException != null)
-            {
-                Console.WriteLine($"Inner Exception: {ex.InnerException.Message}");
-            }
+         
         }
     }
+
+    public async Task EditOnMenuItem(int id,string input)
+    {
+        
+        MenuItem menuItem= await _context.MenuItems.FindAsync(id);
+        Console.WriteLine($"{menuItem.Name} adlı item üzərində dəyişiklik edirsiniz!!! ");
+
+
+      
+        
+
+        switch (input) {
+
+            case "1":
+                Console.WriteLine("İtemin yeni adını təyin edin!");
+                string newName = Console.ReadLine();
+                menuItem.Name = newName;
+                break;
+            case "2":
+                Console.WriteLine("İtemin yeni qiymətini təyin edin!");
+                float newPrice = float.Parse(Console.ReadLine());
+                menuItem.Price = newPrice;
+                break;
+            default:
+                Console.WriteLine("Yanlış seçim 1 vəya 2 seçməlisiniz!");
+                return;
+                
+        
+        }
+
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("Uğurlu proses");
+        Console.ForegroundColor = ConsoleColor.Blue;
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task RemoveItem(int id)
+    {
+
+    }
+
+
 }
+
+

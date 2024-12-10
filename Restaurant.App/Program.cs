@@ -49,6 +49,11 @@ namespace Restaurant.App
                                     
                                     break;
                                 case "2":
+                                    Console.WriteLine("Nə düzəliş etmək istəyirsiniz?");
+                                    Console.WriteLine("1.Ad");
+                                    Console.WriteLine("2.Qiymət");
+                                    string case2Input = Console.ReadLine();
+                                    menuServices.EditOnMenuItem(1, case2Input);
                                     break;
                                 case "3":
                                     break;
