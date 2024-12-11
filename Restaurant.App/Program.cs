@@ -6,7 +6,7 @@ namespace Restaurant.App
     public class Program
     {
 
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             Console.OutputEncoding = Encoding.UTF8;
             Console.ForegroundColor = ConsoleColor.Blue;
@@ -21,14 +21,14 @@ namespace Restaurant.App
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 Console.WriteLine("1: Menu üzərində əməliyyat");
                 Console.WriteLine("2: Sifarişlər üzərində əməliyyat");
-                Console.WriteLine("3: Sistemdən çıxmaq");
+                Console.WriteLine("0: Sistemdən çıxmaq");
                 input = Console.ReadLine();
                 switch (input)
                 {
                     case "1":
                         do
                         {
-                            Console.ForegroundColor= ConsoleColor.Blue;
+                            Console.ForegroundColor = ConsoleColor.Blue;
                             Console.WriteLine("1: Yeni item əlavə et");
                             Console.WriteLine("2: Item üzərində düzəliş et");
                             Console.WriteLine("3: Item Sil");
@@ -40,26 +40,51 @@ namespace Restaurant.App
                             Console.WriteLine("");
                             input2 = Console.ReadLine();
 
-
+                            int id;
                             MenuServices menuServices = new MenuServices(context);
                             switch (input2)
                             {
                                 case "1":
+
+
                                     MenuCase1(menuServices);
-                                    
+
                                     break;
                                 case "2":
+                                    Console.WriteLine("Dəyişiklik etmək istədiyiniz itemin İD-sini qeyd edin!");
+                                    id = int.Parse(Console.ReadLine());
                                     Console.WriteLine("Nə düzəliş etmək istəyirsiniz?");
                                     Console.WriteLine("1.Ad");
                                     Console.WriteLine("2.Qiymət");
                                     string case2Input = Console.ReadLine();
-                                    menuServices.EditOnMenuItem(1, case2Input);
+                                    await menuServices.EditOnMenuItem(id, case2Input);
                                     break;
                                 case "3":
+                                    Console.WriteLine("Silmək istədiyiniz itemin İD-sini qeyd edin!");
+                                    id = int.Parse(Console.ReadLine());
+                                    await menuServices.RemoveMenuItem(id);
                                     break;
                                 case "4":
+                                    menuServices.ShowAllMenuItems();
                                     break;
                                 case "5":
+                                    Console.WriteLine("item lərini görmək istədiyiniz kateqoriyanı seçin!");
+                                    Console.WriteLine("");
+                                    Console.WriteLine("Kateqoriyalar");
+
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine("1.Salad");
+                                    Console.WriteLine("2.Soup");
+                                    Console.WriteLine("3.Kebab");
+                                    Console.WriteLine("4.Sides");
+                                    Console.WriteLine("5.Pizza");
+                                    Console.WriteLine("6.Burger");
+                                    Console.WriteLine("7.Azerbaijani_dish");
+                                    Console.WriteLine("8.Drinks");
+                                    Console.WriteLine("9.Desserts");
+                                    int categoryNo= int.Parse(Console.ReadLine());
+                                    menuServices.ShowAllMenuItemsByCategory(categoryNo);
+
                                     break;
                                 case "6":
                                     break;
@@ -98,7 +123,7 @@ namespace Restaurant.App
                                 break;
                             case "7":
                                 break;
-                        }   
+                        }
 
                         break;
                     case "0":
@@ -113,7 +138,7 @@ namespace Restaurant.App
 
         }
 
-        private static void MenuCase1(MenuServices menuServices)
+        private static async void MenuCase1(MenuServices menuServices)
         {
             Console.WriteLine("Item adı: ");
             string name = Console.ReadLine();
@@ -133,36 +158,19 @@ namespace Restaurant.App
             Console.WriteLine("7.Azerbaijani_dish");
             Console.WriteLine("8.Drinks");
             Console.WriteLine("9.Desserts");
-            bool check = true;
-            do
+            try
             {
-                Console.WriteLine("Kateqoriyanı seçin (1-9): ");
-                if (!int.TryParse(Console.ReadLine(), out int inp) || inp < 1 || inp > 9)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Zəhmət olmasa düzgün seçim edin (1-9) aralığında");
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    
-                }
+                
 
-                Category category = inp switch
-                {
-                    1 => Category.Salad,
-                    2 => Category.Soup,
-                    3 => Category.Kebab,
-                    4 => Category.Sides,
-                    5 => Category.Pizza,
-                    6 => Category.Burger,
-                    7 => Category.Azerbaijani_dish,
-                    8 => Category.Drinks,
-                    9 => Category.Desserts,
-                    _ => throw new InvalidOperationException("Yanlış catalog seçimi")
-                };
+                int inp = int.Parse(Console.ReadLine());
+                menuServices.CreateMenuItem(name, price, inp);
 
-                menuServices.CreateMenuItem(name, price, category);
-                 check = false;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
 
-            } while (check);
 
         }
     }
