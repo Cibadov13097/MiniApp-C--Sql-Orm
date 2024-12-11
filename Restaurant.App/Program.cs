@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Restaurant.Service;
 using Restaurant.Core.Enums;
+using Restaurant.Service.Services;
 namespace Restaurant.App
 {
     public class Program
@@ -45,53 +46,29 @@ namespace Restaurant.App
                             switch (input2)
                             {
                                 case "1":
-
-
                                     MenuCase1(menuServices);
-
                                     break;
                                 case "2":
-                                    Console.WriteLine("Dəyişiklik etmək istədiyiniz itemin İD-sini qeyd edin!");
-                                    id = int.Parse(Console.ReadLine());
-                                    Console.WriteLine("Nə düzəliş etmək istəyirsiniz?");
-                                    Console.WriteLine("1.Ad");
-                                    Console.WriteLine("2.Qiymət");
-                                    string case2Input = Console.ReadLine();
-                                    await menuServices.EditOnMenuItem(id, case2Input);
+                                    id = await MenuCase2(menuServices);
                                     break;
                                 case "3":
-                                    Console.WriteLine("Silmək istədiyiniz itemin İD-sini qeyd edin!");
-                                    id = int.Parse(Console.ReadLine());
-                                    await menuServices.RemoveMenuItem(id);
+                                    id = await MenuCase3(menuServices);
                                     break;
                                 case "4":
                                     menuServices.ShowAllMenuItems();
                                     break;
                                 case "5":
-                                    Console.WriteLine("item lərini görmək istədiyiniz kateqoriyanı seçin!");
-                                    Console.WriteLine("");
-                                    Console.WriteLine("Kateqoriyalar");
-
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine("1.Salad");
-                                    Console.WriteLine("2.Soup");
-                                    Console.WriteLine("3.Kebab");
-                                    Console.WriteLine("4.Sides");
-                                    Console.WriteLine("5.Pizza");
-                                    Console.WriteLine("6.Burger");
-                                    Console.WriteLine("7.Azerbaijani_dish");
-                                    Console.WriteLine("8.Drinks");
-                                    Console.WriteLine("9.Desserts");
-                                    int categoryNo= int.Parse(Console.ReadLine());
-                                    menuServices.ShowAllMenuItemsByCategory(categoryNo);
-
+                                    MenuCase5(menuServices);
                                     break;
                                 case "6":
+                                    MenuCase6(menuServices);
                                     break;
                                 case "7":
+                                    MenuCase7(menuServices);
                                     break;
                             }
                         } while (input2 != "0");
+
 
                         break;
                     case "2":
@@ -105,11 +82,12 @@ namespace Restaurant.App
                         Console.WriteLine("0: Ana Menyuya qayıt");
                         Console.WriteLine("");
                         input2 = Console.ReadLine();
-
+                        OrderServices orderServices = new OrderServices(context);
 
                         switch (input2)
                         {
                             case "1":
+                                orderServices.CreateOrder();
                                 break;
                             case "2":
                                 break;
@@ -138,6 +116,79 @@ namespace Restaurant.App
 
         }
 
+
+        //MenuItem Cases
+        private static void MenuCase7(MenuServices menuServices)
+        {
+            Console.Write("Axtarış etmək istədiyiniz adı vəya teksti yazın: ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            menuServices.SearchByName(Console.ReadLine());
+            System.Threading.Thread.Sleep(3000);
+            Console.Clear();
+        }
+
+        private static void MenuCase6(MenuServices menuServices)
+        {
+            Console.WriteLine("Zəhmət olmasa max və min qiymətləri qeyd edin!");
+            Console.Write("Max dəyər: ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            float max = float.Parse(Console.ReadLine());
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write("Min dəyər: ");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            float min = float.Parse(Console.ReadLine());
+
+            menuServices.ShowMenuItemsByPrice(min, max);
+        }
+
+        private static void MenuCase5(MenuServices menuServices)
+        {
+            Console.WriteLine("item lərini görmək istədiyiniz kateqoriyanı seçin!");
+            Console.WriteLine("");
+            Console.WriteLine("Kateqoriyalar");
+
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("1.Salad");
+            Console.WriteLine("2.Soup");
+            Console.WriteLine("3.Kebab");
+            Console.WriteLine("4.Sides");
+            Console.WriteLine("5.Pizza");
+            Console.WriteLine("6.Burger");
+            Console.WriteLine("7.Azerbaijani_dish");
+            Console.WriteLine("8.Drinks");
+            Console.WriteLine("9.Desserts");
+            int categoryNo = int.Parse(Console.ReadLine());
+            menuServices.ShowMenuItemsByCategory(categoryNo);
+        }
+
+        private static async Task<int> MenuCase3(MenuServices menuServices)
+        {
+            int id;
+            Console.WriteLine("Silmək istədiyiniz itemin İD-sini qeyd edin!");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            id = int.Parse(Console.ReadLine());
+            await menuServices.RemoveMenuItem(id);
+            System.Threading.Thread.Sleep(2000);
+            Console.Clear();
+            return id;
+        }
+
+        private static async Task<int> MenuCase2(MenuServices menuServices)
+        {
+            int id;
+            Console.WriteLine("Dəyişiklik etmək istədiyiniz itemin İD-sini qeyd edin!");
+            id = int.Parse(Console.ReadLine());
+            Console.WriteLine("Nə düzəliş etmək istəyirsiniz?");
+            Console.WriteLine("1.Ad");
+            Console.WriteLine("2.Qiymət");
+            Console.ForegroundColor = ConsoleColor.Magenta;
+            string case2Input = Console.ReadLine();
+            await menuServices.EditOnMenuItem(id, case2Input);
+            System.Threading.Thread.Sleep(2000);
+            Console.Clear();
+            return id;
+        }
+
         private static async void MenuCase1(MenuServices menuServices)
         {
             Console.WriteLine("Item adı: ");
@@ -160,8 +211,7 @@ namespace Restaurant.App
             Console.WriteLine("9.Desserts");
             try
             {
-                
-
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 int inp = int.Parse(Console.ReadLine());
                 menuServices.CreateMenuItem(name, price, inp);
 
@@ -170,7 +220,8 @@ namespace Restaurant.App
             {
                 Console.WriteLine(ex.Message);
             }
-
+            System.Threading.Thread.Sleep(2000);
+            Console.Clear();
 
         }
     }

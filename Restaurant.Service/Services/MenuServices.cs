@@ -49,9 +49,6 @@ public class MenuServices
         SuccessfullMessage();
         await _context.SaveChangesAsync();
     }
-
-
-
     public async Task EditOnMenuItem(int id, string input)
     {
 
@@ -156,16 +153,8 @@ public class MenuServices
             foreach (MenuItem menuItem in _context.MenuItems)
             {
 
-                
-                Console.WriteLine("");
-                Console.WriteLine($"ITEM {cnt++}");
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"ID:{_context.MenuItems.Find(menuItem.Id).Id}");
-                Console.WriteLine($"Ad:{_context.MenuItems.Find(menuItem.Id).Name}");
-                Console.WriteLine($"Qiymət:{_context.MenuItems.Find(menuItem.Id).Price}");
-                Console.WriteLine($"Kateqoriya:{_context.MenuItems.Find(menuItem.Id).Category}");
-                Console.WriteLine("");
-                Console.ForegroundColor = ConsoleColor.Blue;
+
+                cnt = PrintMenuItemAttributes(cnt, menuItem);
 
 
             }
@@ -176,8 +165,7 @@ public class MenuServices
         }
 
     }
-
-    public async Task ShowAllMenuItemsByCategory(int categoryNo)
+    public async Task ShowMenuItemsByCategory(int categoryNo)
     {
 
         try
@@ -190,25 +178,14 @@ public class MenuServices
 
                 if (_context.MenuItems.Find(menuItem.Id).Category == category)
                 {
-
-
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    Console.WriteLine("");
-                    Console.WriteLine($"ITEM {cnt++}");
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"ID:{_context.MenuItems.Find(menuItem.Id).Id}");
-                    Console.WriteLine($"Ad:{_context.MenuItems.Find(menuItem.Id).Name}");
-                    Console.WriteLine($"Qiymət:{_context.MenuItems.Find(menuItem.Id).Price}");
-                    Console.WriteLine($"Kateqoriya:{_context.MenuItems.Find(menuItem.Id).Category}");
-                    Console.WriteLine("");
-                   
-                   
-
+                    cnt = PrintMenuItemAttributes(cnt, menuItem);
+                    
                 }
 
 
             }
-
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (cnt == 1) Console.WriteLine("Bu qiymət aralığında İtem yoxdur");
         }
         catch (Exception ex)
         {
@@ -217,6 +194,47 @@ public class MenuServices
 
 
     }
+    public async Task ShowMenuItemsByPrice(float min, float max)
+    {
+        try
+        {
+            int cnt = 1;
+
+            if (max <= min) throw new InvalidSalaryException("maximum qiymət minimum qiymətdən böyük olmalıdır");
+            foreach (var menuItem in _context.MenuItems)
+            {
+
+                if (menuItem.Price > min && menuItem.Price < max)
+                {
+                    cnt = PrintMenuItemAttributes(cnt, menuItem);
+                    
+                }
+            }
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (cnt == 1) Console.WriteLine("Bu qiymət aralığında İtem yoxdur");
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine($"{ex.Message}");
+        }
+
+    }
+    public async Task SearchByName(string text)
+    {
+        int cnt = 1;
+        foreach (var menuItem in _context.MenuItems)
+        {
+            if (menuItem.Name.Contains(text))
+            {
+                cnt = PrintMenuItemAttributes(cnt, menuItem);
+            }
+        }
+        Console.ForegroundColor = ConsoleColor.Red;
+        if (cnt == 1) Console.WriteLine("Bu ad-lı İtem mövcud deyil!");
+    }
+
+
 
     //subMethods
     private void NameCheck(string name)
@@ -262,6 +280,21 @@ public class MenuServices
             _ => throw new InvalidOperationException("Yanlış catalog seçimi")
         };
     }
+
+    private int PrintMenuItemAttributes(int cnt, MenuItem menuItem)
+    {
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.WriteLine("");
+        Console.WriteLine($"ITEM {cnt++}");
+        Console.ForegroundColor = ConsoleColor.Yellow;
+        Console.WriteLine($"ID:{_context.MenuItems.Find(menuItem.Id).Id}");
+        Console.WriteLine($"Ad:{_context.MenuItems.Find(menuItem.Id).Name}");
+        Console.WriteLine($"Qiymət:{_context.MenuItems.Find(menuItem.Id).Price}");
+        Console.WriteLine($"Kateqoriya:{_context.MenuItems.Find(menuItem.Id).Category}");
+        Console.WriteLine("");
+        return cnt;
+    }
+
 }
 
 
