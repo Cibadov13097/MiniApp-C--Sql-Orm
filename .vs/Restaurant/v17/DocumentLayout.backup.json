@@ -3,16 +3,16 @@
   "WorkspaceRootPath": "C:\\Users\\User\\source\\repos\\Restaurant\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{2FAB8788-ADBA-4A9A-809F-7EA2CF8D97E7}|Restaurant.App\\Restaurant.App.csproj|c:\\users\\user\\source\\repos\\restaurant\\restaurant.app\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{2FAB8788-ADBA-4A9A-809F-7EA2CF8D97E7}|Restaurant.App\\Restaurant.App.csproj|solutionrelative:restaurant.app\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{B990FBED-91CE-48B3-AE84-B1DFF4E6B5A0}|Restaurant.Service\\Restaurant.Service.csproj|c:\\users\\user\\source\\repos\\restaurant\\restaurant.service\\services\\orderservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B990FBED-91CE-48B3-AE84-B1DFF4E6B5A0}|Restaurant.Service\\Restaurant.Service.csproj|solutionrelative:restaurant.service\\services\\orderservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{B990FBED-91CE-48B3-AE84-B1DFF4E6B5A0}|Restaurant.Service\\Restaurant.Service.csproj|c:\\users\\user\\source\\repos\\restaurant\\restaurant.service\\services\\menuservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{B990FBED-91CE-48B3-AE84-B1DFF4E6B5A0}|Restaurant.Service\\Restaurant.Service.csproj|solutionrelative:restaurant.service\\services\\menuservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{2FAB8788-ADBA-4A9A-809F-7EA2CF8D97E7}|Restaurant.App\\Restaurant.App.csproj|c:\\users\\user\\source\\repos\\restaurant\\restaurant.app\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{2FAB8788-ADBA-4A9A-809F-7EA2CF8D97E7}|Restaurant.App\\Restaurant.App.csproj|solutionrelative:restaurant.app\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{DE30D870-B5A6-47AA-88B0-71B0D01CEAC0}|Restaurant.Core\\Restaurant.Core.csproj|c:\\users\\user\\source\\repos\\restaurant\\restaurant.core\\models\\orderitem.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -78,17 +78,17 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 0,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 0,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Restaurant\\Restaurant.App\\Program.cs",
               "RelativeDocumentMoniker": "Restaurant.App\\Program.cs",
               "ToolTip": "C:\\Users\\User\\source\\repos\\Restaurant\\Restaurant.App\\Program.cs",
               "RelativeToolTip": "Restaurant.App\\Program.cs",
-              "ViewState": "AgIAAEcAAAAAAAAAAAAQwFcAAAAZAAAAAAAAAA==",
+              "ViewState": "AgIAADUAAAAAAAAAAAAnwG8AAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-08T14:09:48.681Z",
               "IsPinned": true,
@@ -96,20 +96,20 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 1,
               "Title": "OrderServices.cs",
               "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Restaurant\\Restaurant.Service\\Services\\OrderServices.cs",
               "RelativeDocumentMoniker": "Restaurant.Service\\Services\\OrderServices.cs",
-              "ToolTip": "C:\\Users\\User\\source\\repos\\Restaurant\\Restaurant.Service\\Services\\OrderServices.cs*",
-              "RelativeToolTip": "Restaurant.Service\\Services\\OrderServices.cs*",
-              "ViewState": "AgIAABEAAAAAAAAAAAAUwCAAAAAOAAAAAAAAAA==",
+              "ToolTip": "C:\\Users\\User\\source\\repos\\Restaurant\\Restaurant.Service\\Services\\OrderServices.cs",
+              "RelativeToolTip": "Restaurant.Service\\Services\\OrderServices.cs",
+              "ViewState": "AgIAACQAAAAAAAAAAAAnwDIAAAAhAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2024-12-11T18:09:09.798Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "MenuServices.cs",
               "DocumentMoniker": "C:\\Users\\User\\source\\repos\\Restaurant\\Restaurant.Service\\Services\\MenuServices.cs",
               "RelativeDocumentMoniker": "Restaurant.Service\\Services\\MenuServices.cs",
