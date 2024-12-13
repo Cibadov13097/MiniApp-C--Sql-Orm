@@ -72,6 +72,7 @@ namespace Restaurant.App
 
                         break;
                     case "2":
+                        Console.ForegroundColor = ConsoleColor.Blue;
                         Console.WriteLine("1: Yeni sifariş əlavə et");
                         Console.WriteLine("2: Sifarişi ləğv et");
                         Console.WriteLine("3: Bütün sifarişləri göstər");
@@ -87,19 +88,60 @@ namespace Restaurant.App
                         switch (input2)
                         {
                             case "1":
-                               await orderServices.CreateOrder();
+                                Console.ForegroundColor = ConsoleColor.Cyan;
+                                await orderServices.CreateOrder();
                                 break;
                             case "2":
+                                Console.WriteLine("Silmək istədiyiniz Sifarişin nömrəsini daxil edin: ");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                await orderServices.RemoveOrder(int.Parse(Console.ReadLine()));
+                                Console.ForegroundColor = ConsoleColor.Blue;
                                 break;
                             case "3":
+                                await orderServices.ShowAllOrders();
                                 break;
                             case "4":
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                Console.Write("ilk tarix (dd/MM/yyyy): ");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                string beginningTimestr = Console.ReadLine();
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                Console.Write("son tarix (dd/MM/yyyy): ");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                string endingTimestr = Console.ReadLine();
+
+                                if (DateTime.TryParseExact(beginningTimestr, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime beginningTime) && (DateTime.TryParseExact(endingTimestr, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime endingTime)))
+                                {
+                                    await orderServices.ShowOrdersByTimeInterval(beginningTime, endingTime);
+                                }
                                 break;
                             case "5":
+                                Console.WriteLine("Minimum qiymət");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                float minPrice = float.Parse(Console.ReadLine());
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                Console.WriteLine("Maximum qiymət");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                float maxPrice = float.Parse(Console.ReadLine());
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                orderServices.ShowOrderByTotalPrice(minPrice, maxPrice);
                                 break;
                             case "6":
+                                Console.Write("Tarixi daxil edin (dd/MM/yyyy): ");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                string datestr = Console.ReadLine();
+                                Console.ForegroundColor = ConsoleColor.Blue;
+                                if (DateTime.TryParseExact(datestr, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime date))
+                                {
+
+                                    orderServices.ShowOrderByDate(date);
+                                }
                                 break;
                             case "7":
+                                Console.WriteLine("Sifarişin nömrəsini daxil edin!");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                orderServices.ShowOrderById(int.Parse(Console.ReadLine()));
+                                Console.ForegroundColor = ConsoleColor.Blue;
                                 break;
                         }
 
@@ -123,8 +165,8 @@ namespace Restaurant.App
             Console.Write("Axtarış etmək istədiyiniz adı vəya teksti yazın: ");
             Console.ForegroundColor = ConsoleColor.Magenta;
             await menuServices.SearchByName(Console.ReadLine());
-           
-            
+
+
         }
 
         private static async void MenuCase6(MenuServices menuServices)
@@ -169,7 +211,7 @@ namespace Restaurant.App
             id = int.Parse(Console.ReadLine());
             await menuServices.RemoveMenuItem(id);
             System.Threading.Thread.Sleep(2000);
-            
+
             return id;
         }
 
@@ -185,7 +227,7 @@ namespace Restaurant.App
             string case2Input = Console.ReadLine();
             await menuServices.EditOnMenuItem(id, case2Input);
             System.Threading.Thread.Sleep(2000);
-            
+
             return id;
         }
 
@@ -221,7 +263,7 @@ namespace Restaurant.App
                 Console.WriteLine(ex.Message);
             }
             System.Threading.Thread.Sleep(2000);
-            
+
 
         }
     }

@@ -26,12 +26,13 @@ public class MenuServices
                 Price = price,
                 Category = category
             };
-            _context.MenuItems.Add(newMenuItem);
+            await _context.MenuItems.AddAsync(newMenuItem);
 
 
 
 
-
+            SuccessfullMessage();
+            await _context.SaveChangesAsync();
 
         }
         catch (Exception ex)
@@ -41,8 +42,7 @@ public class MenuServices
             Console.WriteLine("");
             Console.ForegroundColor = ConsoleColor.Blue;
         }
-        SuccessfullMessage();
-        await _context.SaveChangesAsync();
+        
     }
     public async Task EditOnMenuItem(int id, string input)
     {
@@ -110,7 +110,7 @@ public class MenuServices
     {
         try
         {
-            MenuItem menuItem = _context.MenuItems.Find(id);
+            MenuItem menuItem = await _context.MenuItems.FindAsync(id);
             if (menuItem != null)
             {
                 {
@@ -149,7 +149,7 @@ public class MenuServices
             {
 
 
-                cnt = PrintMenuItemAttributes(cnt, menuItem);
+                cnt = await PrintMenuItemAttributes(cnt, menuItem);
 
 
             }
@@ -173,7 +173,7 @@ public class MenuServices
 
                 if (_context.MenuItems.Find(menuItem.Id).Category == category)
                 {
-                    cnt = PrintMenuItemAttributes(cnt, menuItem);
+                    cnt = await PrintMenuItemAttributes(cnt, menuItem);
                     
                 }
 
@@ -201,7 +201,7 @@ public class MenuServices
 
                 if (menuItem.Price > min && menuItem.Price < max)
                 {
-                    cnt = PrintMenuItemAttributes(cnt, menuItem);
+                    cnt = await PrintMenuItemAttributes(cnt, menuItem);
                     
                 }
             }
@@ -222,7 +222,7 @@ public class MenuServices
         {
             if (menuItem.Name.Contains(text))
             {
-                cnt = PrintMenuItemAttributes(cnt, menuItem);
+                cnt = await PrintMenuItemAttributes(cnt, menuItem);
             }
         }
         Console.ForegroundColor = ConsoleColor.Red;
@@ -276,16 +276,18 @@ public class MenuServices
         };
     }
 
-    private int PrintMenuItemAttributes(int cnt, MenuItem menuItem)
+    private async Task<int> PrintMenuItemAttributes(int cnt, MenuItem menuItem)
     {
         Console.ForegroundColor = ConsoleColor.Blue;
         Console.WriteLine("");
         Console.WriteLine($"ITEM {cnt++}");
         Console.ForegroundColor = ConsoleColor.Yellow;
-        Console.WriteLine($"ID:{_context.MenuItems.Find(menuItem.Id).Id}");
-        Console.WriteLine($"Ad:{_context.MenuItems.Find(menuItem.Id).Name}");
-        Console.WriteLine($"Qiymət:{_context.MenuItems.Find(menuItem.Id).Price}");
-        Console.WriteLine($"Kateqoriya:{_context.MenuItems.Find(menuItem.Id).Category}");
+        MenuItem menu = await _context.MenuItems.FindAsync(menuItem.Id);
+
+        Console.WriteLine($"ID:{menu.Id}");
+        Console.WriteLine($"Ad:{menu.Name}");
+        Console.WriteLine($"Qiymət:{menu.Price}");
+        Console.WriteLine($"Kateqoriya:{menu.Category}");
         Console.WriteLine("");
         return cnt;
     }
