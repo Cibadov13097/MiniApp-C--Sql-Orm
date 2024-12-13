@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Restaurant.Core.Enums;
+
 using Restaurant.Core.Models;
 using Restaurant.DataAccess.Data;
 using Restaurant.Service.Exceptions;
@@ -16,24 +16,40 @@ namespace Restaurant.Service.Services
         private readonly RestaurantDB _context;
         public OrderServices(RestaurantDB context)
         {
-            context = _context;
+            _context = context;
         }
-        public async Task CreateOrder() {
-
+        public async Task CreateOrder()
+        {
+           
+            Order order = new Order();
+            order.Date = DateTime.Now;
+            List<OrderItem> items = new List<OrderItem>();
             bool check = true;
-            while (check) {
-                Console.WriteLine("Menu item nömrəsi və sayını qeyd edin!");
+            order.OrderItems = items;
+            Console.WriteLine("Sifarişə məhsulları əlavə edin");
+            while (check)
+            {
+                
+                Console.WriteLine("Məhsulun nömrəsi");
                 int id = int.Parse(Console.ReadLine());
+                Console.WriteLine(_context.MenuItems.Find(id).Name+" məhsulun sifarişə elavə edirsiniz!");
+                Console.WriteLine("Məhsulun sayını qeyd edin!");
                 int count = int.Parse(Console.ReadLine());
+
                 var OrderItem = new OrderItem
                 {
-                    Id = id,
+                    MenuItemId = id,
                     Count = count,
+                    OrderId = order.Id,
+
                 };
-                OrderItem.OrderId = 1;
+                items.Add(OrderItem);
+                _context.AddAsync(OrderItem);
+
                 Console.WriteLine("sifarişə digər məhsul əlavə edirsiniz? (Yes/No)");
-                string YesNo= Console.ReadLine();
-                switch (YesNo) {
+                string YesNo = Console.ReadLine();
+                switch (YesNo)
+                {
                     case "Yes":
                     case "yes":
                     case "YES":
@@ -41,22 +57,24 @@ namespace Restaurant.Service.Services
                     case "No":
                     case "NO":
                     case "no":
-                          check=false;
+                        check = false;
                         break;
                 }
-               
-            }
 
+            }
             float sum = 0;
-            foreach (var item in _context.OrderItems)
+            foreach (var item in items)
             {
-                sum=sum+(item.Count*_context.MenuItems.Find(item.Id).Price);
+                sum = sum + (item.Count * _context.MenuItems.Find(item.MenuItemId).Price);
             }
+            order.TotalAmount = sum;
 
-            Console.WriteLine(sum);
+
+
+
+            _context.AddAsync(order);
+            await _context.SaveChangesAsync();
 
         }
-
-
     }
 }

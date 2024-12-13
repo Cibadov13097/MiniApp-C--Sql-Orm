@@ -87,7 +87,7 @@ namespace Restaurant.App
                         switch (input2)
                         {
                             case "1":
-                                orderServices.CreateOrder();
+                               await orderServices.CreateOrder();
                                 break;
                             case "2":
                                 break;
@@ -118,16 +118,16 @@ namespace Restaurant.App
 
 
         //MenuItem Cases
-        private static void MenuCase7(MenuServices menuServices)
+        private static async void MenuCase7(MenuServices menuServices)
         {
             Console.Write("Axtarış etmək istədiyiniz adı vəya teksti yazın: ");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            menuServices.SearchByName(Console.ReadLine());
-            System.Threading.Thread.Sleep(3000);
-            Console.Clear();
+            await menuServices.SearchByName(Console.ReadLine());
+           
+            
         }
 
-        private static void MenuCase6(MenuServices menuServices)
+        private static async void MenuCase6(MenuServices menuServices)
         {
             Console.WriteLine("Zəhmət olmasa max və min qiymətləri qeyd edin!");
             Console.Write("Max dəyər: ");
@@ -138,10 +138,10 @@ namespace Restaurant.App
             Console.ForegroundColor = ConsoleColor.Magenta;
             float min = float.Parse(Console.ReadLine());
 
-            menuServices.ShowMenuItemsByPrice(min, max);
+            await menuServices.ShowMenuItemsByPrice(min, max);
         }
 
-        private static void MenuCase5(MenuServices menuServices)
+        private static async void MenuCase5(MenuServices menuServices)
         {
             Console.WriteLine("item lərini görmək istədiyiniz kateqoriyanı seçin!");
             Console.WriteLine("");
@@ -158,7 +158,7 @@ namespace Restaurant.App
             Console.WriteLine("8.Drinks");
             Console.WriteLine("9.Desserts");
             int categoryNo = int.Parse(Console.ReadLine());
-            menuServices.ShowMenuItemsByCategory(categoryNo);
+            await menuServices.ShowMenuItemsByCategory(categoryNo);
         }
 
         private static async Task<int> MenuCase3(MenuServices menuServices)
@@ -169,7 +169,7 @@ namespace Restaurant.App
             id = int.Parse(Console.ReadLine());
             await menuServices.RemoveMenuItem(id);
             System.Threading.Thread.Sleep(2000);
-            Console.Clear();
+            
             return id;
         }
 
@@ -185,7 +185,7 @@ namespace Restaurant.App
             string case2Input = Console.ReadLine();
             await menuServices.EditOnMenuItem(id, case2Input);
             System.Threading.Thread.Sleep(2000);
-            Console.Clear();
+            
             return id;
         }
 
@@ -213,7 +213,7 @@ namespace Restaurant.App
             {
                 Console.ForegroundColor = ConsoleColor.Magenta;
                 int inp = int.Parse(Console.ReadLine());
-                menuServices.CreateMenuItem(name, price, inp);
+                await menuServices.CreateMenuItem(name, price, inp);
 
             }
             catch (Exception ex)
@@ -221,7 +221,7 @@ namespace Restaurant.App
                 Console.WriteLine(ex.Message);
             }
             System.Threading.Thread.Sleep(2000);
-            Console.Clear();
+            
 
         }
     }
