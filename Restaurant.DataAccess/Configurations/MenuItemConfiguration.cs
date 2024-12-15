@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.Core.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using System.Reflection.Emit;
+using Restaurant.Core.Models;
 
 
 namespace Restaurant.DataAccess.Configurations
@@ -13,6 +12,8 @@ namespace Restaurant.DataAccess.Configurations
         {
             {
                 builder.HasKey(o => o.Id);
+                builder.Property(o=> o.Name).IsRequired();
+                builder.Property(o => o.Price).IsRequired();
                 builder.HasIndex(m => m.Name).IsUnique();
 
             }

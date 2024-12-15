@@ -1,15 +1,5 @@
-﻿
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Intrinsics.Arm;
-using System.Text;
-using System.Threading.Tasks;
-
-using Restaurant.Core.Models;
+﻿using Restaurant.Core.Models;
 using Restaurant.DataAccess.Data;
-using Restaurant.Service.Exceptions;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Restaurant.Service.Services
 {
@@ -20,7 +10,7 @@ namespace Restaurant.Service.Services
         {
             _context = context;
         }
-        public async Task CreateOrder()
+        public async Task CreateOrderAsync()
         {
 
             bool retry = true;
@@ -38,10 +28,7 @@ namespace Restaurant.Service.Services
 
                 while (check)
                 {
-
-
                     bool tryInput = true;
-
                     while (tryInput)
                     {
                         Console.WriteLine("Məhsulun nömrəsini qeyd edin!");
@@ -55,6 +42,21 @@ namespace Restaurant.Service.Services
                                 Console.ForegroundColor = ConsoleColor.Blue;
                                 Console.WriteLine($"{product.Name} məhsulunu sifarişə əlavə edirsiniz!");
                                 tryInput = false;
+
+                                Console.WriteLine("Məhsulun sayını qeyd edin!");
+                                Console.ForegroundColor = ConsoleColor.Magenta;
+                                int count = int.Parse(Console.ReadLine());
+                                Console.ForegroundColor = ConsoleColor.Blue;
+
+                                var OrderItem = new OrderItem
+                                {
+                                    MenuItemId = id,
+                                    Count = count,
+                                    OrderId = order.Id,
+
+                                };
+                                items.Add(OrderItem);
+                                _context.AddAsync(OrderItem);
                             }
                             else
                             {
@@ -93,25 +95,10 @@ namespace Restaurant.Service.Services
                             Console.ForegroundColor = ConsoleColor.Magenta;
                         }
                     }
-
-
-                    Console.WriteLine("Məhsulun sayını qeyd edin!");
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                    int count = int.Parse(Console.ReadLine());
-                    Console.ForegroundColor = ConsoleColor.Blue;
-
-                    var OrderItem = new OrderItem
-                    {
-                        MenuItemId = id,
-                        Count = count,
-                        OrderId = order.Id,
-
-                    };
-                    items.Add(OrderItem);
-                    _context.AddAsync(OrderItem);
-
                 YesNo:
+                    Green();
                     Console.WriteLine("sifarişə digər məhsul əlavə edirsiniz? (Yes/No)");
+                    Blue();
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     string YesNo = Console.ReadLine();
                     Console.ForegroundColor = ConsoleColor.Blue;
@@ -120,6 +107,8 @@ namespace Restaurant.Service.Services
                         case "Yes":
                         case "yes":
                         case "YES":
+                            check = true;
+                            tryInput = false;
                             break;
                         case "No":
                         case "NO":
@@ -127,12 +116,11 @@ namespace Restaurant.Service.Services
                             check = false;
                             break;
                         default:
-                            Console.WriteLine("Zəhmət olmasa sifarişə digər məhsul əlavə edirsiniz? (Yes/No)");
+                            Console.WriteLine("sifarişə digər məhsul əlavə edirsiniz? (Yes/No)");
                             goto YesNo;
 
 
                     }
-
                 }
                 float sum = 0;
                 foreach (var item in items)
@@ -144,8 +132,6 @@ namespace Restaurant.Service.Services
                     }
                 }
                 order.TotalAmount = sum;
-
-
                 if (check == false)
                 {
                     _context.AddAsync(order);
@@ -159,81 +145,33 @@ namespace Restaurant.Service.Services
                 Console.WriteLine(ex.Message);
                 Console.WriteLine("");
                 Console.ForegroundColor = ConsoleColor.Blue;
-
-            }
-
-
-
-
-
-
-
-
-
-        }
-
-        public async Task RemoveOrder(int id)
-        {
-            Order order = await _context.Orders.FindAsync(id);
-            _context.Orders.Remove(order);
-            _context.SaveChangesAsync();
-        }
-
-        public async Task ShowAllOrders()
-        {
-            int num = 1;
-            foreach (var order1 in _context.Orders)
-            {
-                Console.ForegroundColor = ConsoleColor.DarkGreen;
-                Console.WriteLine($"Sifariş {num++}");
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine($"Tarix {order1.Date}");
-                Console.WriteLine($"Yekun qiymət {order1.TotalAmount}");
-
-
-                using (var _newContext = new RestaurantDB())
-                {
-                    var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("   Sifariş məhsulları");
-                    foreach (var orderItem in orderItems)
-                    {
-                        using (var _newContext2 = new RestaurantDB())
-                        {
-
-                            List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
-
-                            var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
-
-                            if (menuItem != null)
-                            {
-                                Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m {orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
-                            }
-                            else
-                            {
-                                Console.WriteLine("Məhsul yoxdur!");
-                            }
-                        }
-
-                    }
-                    Console.WriteLine();
-                    Console.ForegroundColor = ConsoleColor.White;
-                    Console.WriteLine("----------------------------------------------------------------------------");
-                }
             }
         }
 
-        public async Task ShowOrdersByTimeInterval(DateTime beginingTime, DateTime endingTime)
+        public async Task RemoveOrderAsync(int id)
+        {
+            try
+            {
+                Order order = await _context.Orders.FindAsync(id);
+                _context.Orders.Remove(order);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public async Task ShowAllOrdersAsync()
         {
             int num = 1;
-
-            foreach (var order1 in _context.Orders)
+            try
             {
-                if (order1.Date > beginingTime && order1.Date < endingTime)
+                foreach (var order1 in _context.Orders)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
+                    DarkGreen();
                     Console.WriteLine($"Sifariş {num++}");
-                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Cyan();
                     Console.WriteLine($"Tarix {order1.Date}");
                     Console.WriteLine($"Yekun qiymət {order1.TotalAmount}");
 
@@ -241,13 +179,12 @@ namespace Restaurant.Service.Services
                     using (var _newContext = new RestaurantDB())
                     {
                         var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
-                        Console.ForegroundColor = ConsoleColor.White;
+                        White();
                         Console.WriteLine("   Sifariş məhsulları");
                         foreach (var orderItem in orderItems)
                         {
                             using (var _newContext2 = new RestaurantDB())
                             {
-
                                 List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
 
                                 var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
@@ -264,150 +201,257 @@ namespace Restaurant.Service.Services
 
                         }
                         Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.White;
+                        White();
                         Console.WriteLine("----------------------------------------------------------------------------");
                     }
                 }
             }
-
-        }
-        public async Task ShowOrderByDate(DateTime date)
-        {
-            int num = 1;
-
-            foreach (var order1 in _context.Orders)
+            catch (Exception ex)
             {
-                if (order1.Date.Date == date.Date)
-                {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine($"Sifariş {num++}");
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine($"Tarix {order1.Date}");
-                    Console.WriteLine($"Yekun qiymət {order1.TotalAmount}");
-
-                    using (var _newContext = new RestaurantDB())
-                    {
-                        var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("   Sifariş məhsulları");
-                        foreach (var orderItem in orderItems)
-                        {
-                            using (var _newContext2 = new RestaurantDB())
-                            { 
-                                List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
-
-                                var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
-
-                                if (menuItem != null)
-                                {
-                                    Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m{orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Məhsul yoxdur!");
-                                }
-                            }
-                        }
-                        Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("----------------------------------------------------------------------------");
-                    }
-                }
+                Console.WriteLine(ex.Message);
             }
+
         }
 
-        public async Task ShowOrderByTotalPrice(float minPrice,float maxPrice)
+        public async Task ShowOrdersByTimeIntervalAsync(DateTime beginingTime, DateTime endingTime)
         {
             int num = 1;
 
-            foreach (var order1 in _context.Orders)
+            try
             {
-                if (order1.TotalAmount > minPrice && order1.TotalAmount < maxPrice)
+                foreach (var order1 in _context.Orders)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine($"Order {num++}");
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine($"Date {order1.Date}");
-                    Console.WriteLine($"Total Price {order1.TotalAmount}");
-
-
-                    using (var _newContext = new RestaurantDB())
+                    if (order1.Date > beginingTime && order1.Date < endingTime)
                     {
-                        var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("   Sifariş məhsulları");
-                        foreach (var orderItem in orderItems)
+                        DarkGreen();
+                        Console.WriteLine($"Sifariş {num++}");
+                        Cyan();
+                        Console.WriteLine($"Tarix {order1.Date}");
+                        Console.WriteLine($"Yekun qiymət {order1.TotalAmount}");
+                        using (var _newContext = new RestaurantDB())
                         {
-                            using (var _newContext2 = new RestaurantDB())
+                            var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
+                            White();
+                            Console.WriteLine("   Sifariş məhsulları");
+                            foreach (var orderItem in orderItems)
                             {
-
-                                List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
-
-                                var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
-
-                                if (menuItem != null)
+                                using (var _newContext2 = new RestaurantDB())
                                 {
-                                    Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m {orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Məhsul yoxdur!");
+                                    List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
+
+                                    var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
+
+                                    if (menuItem != null)
+                                    {
+                                        Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m {orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Məhsul yoxdur!");
+                                    }
                                 }
                             }
-
+                            Console.WriteLine();
+                            White();
+                            Console.WriteLine("----------------------------------------------------------------------------");
                         }
-                        Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("----------------------------------------------------------------------------");
                     }
                 }
             }
-
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
-
-        public async Task ShowOrderById(int orderId)
+        public async Task ShowOrderByDateAsync(DateTime date)
         {
             int num = 1;
-
-            foreach (var order1 in _context.Orders)
+            try
             {
-                if (order1.Id == orderId)
+
+                foreach (var order1 in _context.Orders)
                 {
-                    Console.ForegroundColor = ConsoleColor.DarkGreen;
-                    Console.WriteLine($"Sifariş {orderId}");
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.WriteLine($"Tarix {order1.Date}");
-                    Console.WriteLine($"Yekun qiymət {order1.TotalAmount}");
-
-                    using (var _newContext = new RestaurantDB())
+                    if (order1.Date.Date == date.Date)
                     {
-                        var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("   Sifariş məhsulları");
-                        foreach (var orderItem in orderItems)
+                        DarkGreen();
+                        Console.WriteLine($"Sifariş {num++}");
+                        Cyan();
+                        Console.WriteLine($"Tarix {order1.Date}");
+                        Console.WriteLine($"Yekun qiymət {order1.TotalAmount}");
+
+                        using (var _newContext = new RestaurantDB())
                         {
-                            using (var _newContext2 = new RestaurantDB())
+                            var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
+                            White();
+                            Console.WriteLine("   Sifariş məhsulları");
+                            foreach (var orderItem in orderItems)
                             {
-                                List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
-
-                                var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
-
-                                if (menuItem != null)
+                                using (var _newContext2 = new RestaurantDB())
                                 {
-                                    Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m{orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
-                                }
-                                else
-                                {
-                                    Console.WriteLine("Məhsul yoxdur!");
+                                    List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
+
+                                    var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
+
+                                    if (menuItem != null)
+                                    {
+                                        Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m{orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Məhsul yoxdur!");
+                                    }
                                 }
                             }
+                            Console.WriteLine();
+                            White();
+                            Console.WriteLine("----------------------------------------------------------------------------");
                         }
-                        Console.WriteLine();
-                        Console.ForegroundColor = ConsoleColor.White;
-                        Console.WriteLine("----------------------------------------------------------------------------");
                     }
                 }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
         }
+
+        public async Task ShowOrderByTotalPriceAsync(float minPrice, float maxPrice)
+        {
+            int num = 1;
+            try
+            {
+                foreach (var order1 in _context.Orders)
+                {
+                    if (order1.TotalAmount > minPrice && order1.TotalAmount < maxPrice)
+                    {
+                        DarkGreen();
+                        Console.WriteLine($"Order {num++}");
+                        Cyan();
+                        Console.WriteLine($"Date {order1.Date}");
+                        Console.WriteLine($"Total Price {order1.TotalAmount}");
+
+
+                        using (var _newContext = new RestaurantDB())
+                        {
+                            var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
+                            White();
+                            Console.WriteLine("   Sifariş məhsulları");
+                            foreach (var orderItem in orderItems)
+                            {
+                                using (var _newContext2 = new RestaurantDB())
+                                {
+
+                                    List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
+
+                                    var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
+
+                                    if (menuItem != null)
+                                    {
+                                        Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m {orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Məhsul yoxdur!");
+                                    }
+                                }
+                            }
+                            Console.WriteLine();
+                            White();
+                            Console.WriteLine("----------------------------------------------------------------------------");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        public async Task ShowOrderByIdAsync(int orderId)
+        {
+            int num = 1;
+            try
+            {
+
+                foreach (var order1 in _context.Orders)
+                {
+                    if (order1.Id == orderId)
+                    {
+                        DarkGreen();
+                        Console.WriteLine($"Sifariş {orderId}");
+                        Cyan();
+                        Console.WriteLine($"Tarix {order1.Date}");
+                        Console.WriteLine($"Yekun qiymət {order1.TotalAmount}");
+
+                        using (var _newContext = new RestaurantDB())
+                        {
+                            var orderItems = _newContext.OrderItems.Where(oi => oi.OrderId == order1.Id).ToList();
+                            White();
+                            Console.WriteLine("   Sifariş məhsulları");
+                            foreach (var orderItem in orderItems)
+                            {
+                                using (var _newContext2 = new RestaurantDB())
+                                {
+                                    List<MenuItem> menuItems = _newContext2.MenuItems.ToList();
+
+                                    var menuItem = menuItems.Find(mi => mi.Id == orderItem.MenuItemId);
+
+                                    if (menuItem != null)
+                                    {
+                                        Console.WriteLine($"     \u001b[35mAd \u001b[36m{menuItem.Name} \u001b[35mSayı \u001b[36m{orderItem.Count} \u001b[35mQiyməti \u001b[36m{menuItem.Price}");
+                                    }
+                                    else
+                                    {
+                                        Console.WriteLine("Məhsul yoxdur!");
+                                    }
+                                }
+                            }
+                            Console.WriteLine();
+                            White();
+                            Console.WriteLine("----------------------------------------------------------------------------");
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+
+
+
+        //Colors
+        private void Green()
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+        }
+        private void DarkGreen()
+        {
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+        }
+        private void Cyan()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+        }
+        private void White()
+        {
+            Console.ForegroundColor = ConsoleColor.White;
+        }
+        private void Magenta()
+        {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+        }
+        private void Red()
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+        }
+        private void Blue()
+        {
+            Console.ForegroundColor = ConsoleColor.Blue;
+        }
+
     }
 }

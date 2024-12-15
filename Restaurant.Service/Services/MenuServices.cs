@@ -11,7 +11,7 @@ public class MenuServices
         _context = context;
     }
 
-    public async Task CreateMenuItem(string name, float price, int categoryNo)
+    public async Task CreateMenuItemAsync(string name, float price, int categoryNo)
     {
         try
         {
@@ -42,9 +42,9 @@ public class MenuServices
             Console.WriteLine("");
             Console.ForegroundColor = ConsoleColor.Blue;
         }
-        
+
     }
-    public async Task EditOnMenuItem(int id, string input)
+    public async Task EditOnMenuItemAsync(int id, string input)
     {
 
         MenuItem menuItem = await _context.MenuItems.FindAsync(id);
@@ -106,7 +106,7 @@ public class MenuServices
 
         await _context.SaveChangesAsync();
     }
-    public async Task RemoveMenuItem(int id)
+    public async Task RemoveMenuItemAsync(int id)
     {
         try
         {
@@ -140,7 +140,7 @@ public class MenuServices
         }
         catch (Exception ex) { Console.WriteLine(ex.Message); }
     }
-    public async Task ShowAllMenuItems()
+    public async Task ShowAllMenuItemsAsync()
     {
         try
         {
@@ -160,7 +160,7 @@ public class MenuServices
         }
 
     }
-    public async Task ShowMenuItemsByCategory(int categoryNo)
+    public async Task ShowMenuItemsByCategoryAsync(int categoryNo)
     {
 
         try
@@ -174,7 +174,7 @@ public class MenuServices
                 if (_context.MenuItems.Find(menuItem.Id).Category == category)
                 {
                     cnt = await PrintMenuItemAttributes(cnt, menuItem);
-                    
+
                 }
 
 
@@ -189,7 +189,7 @@ public class MenuServices
 
 
     }
-    public async Task ShowMenuItemsByPrice(float min, float max)
+    public async Task ShowMenuItemsByPriceAsync(float min, float max)
     {
         try
         {
@@ -202,7 +202,7 @@ public class MenuServices
                 if (menuItem.Price > min && menuItem.Price < max)
                 {
                     cnt = await PrintMenuItemAttributes(cnt, menuItem);
-                    
+
                 }
             }
             Console.ForegroundColor = ConsoleColor.Red;
@@ -215,7 +215,7 @@ public class MenuServices
         }
 
     }
-    public async Task SearchByName(string text)
+    public async Task SearchByNameAsync(string text)
     {
         int cnt = 1;
         foreach (var menuItem in _context.MenuItems)
@@ -293,5 +293,4 @@ public class MenuServices
     }
 
 }
-
 

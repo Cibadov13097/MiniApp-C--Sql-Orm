@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.Core.Models;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 
@@ -11,6 +10,8 @@ namespace Restaurant.DataAccess.Configurations
         public void Configure(EntityTypeBuilder<Order> builder)
         {
             {
+                builder.Property(o => o.Date).IsRequired();
+                builder.Property(o => o.TotalAmount).IsRequired();
                 builder.HasKey(o => o.Id);
             }
 

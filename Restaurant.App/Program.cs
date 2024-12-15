@@ -1,7 +1,6 @@
 ﻿using System.Text;
-using Restaurant.Service;
-using Restaurant.Core.Enums;
 using Restaurant.Service.Services;
+using Restaurant.App.Controllers;
 namespace Restaurant.App
 {
     public class Program
@@ -15,133 +14,76 @@ namespace Restaurant.App
             string input2 = "";
             Console.WriteLine("Salam hörmətli istifadəçi");
             var context = new Restaurant.DataAccess.Data.RestaurantDB();
+            OrderServices orderServices = new OrderServices(context);
+            OrderController orderController = new OrderController(context);
 
-
+            MenuItemController menuController = new MenuItemController(context);
             do
             {
-                Console.ForegroundColor = ConsoleColor.Cyan;
-                Console.WriteLine("1: Menu üzərində əməliyyat");
-                Console.WriteLine("2: Sifarişlər üzərində əməliyyat");
-                Console.WriteLine("0: Sistemdən çıxmaq");
+                MainMenu();
                 input = Console.ReadLine();
                 switch (input)
                 {
                     case "1":
                         do
                         {
-                            Console.ForegroundColor = ConsoleColor.Blue;
-                            Console.WriteLine("1: Yeni item əlavə et");
-                            Console.WriteLine("2: Item üzərində düzəliş et");
-                            Console.WriteLine("3: Item Sil");
-                            Console.WriteLine("4: Bütün itemləri göstər");
-                            Console.WriteLine("5: Kategoriyaya görə itemləri göstər");
-                            Console.WriteLine("6: Qiymət aralığına görə menu itemları göstər");
-                            Console.WriteLine("7: Menu Itemlər ada görə axtarış et");
-                            Console.WriteLine("0: Ana Menyuya qayıt");
-                            Console.WriteLine("");
+                            MenuForMenuItem();
                             input2 = Console.ReadLine();
-
                             int id;
                             MenuServices menuServices = new MenuServices(context);
                             switch (input2)
                             {
                                 case "1":
-                                    MenuCase1(menuServices);
+                                    menuController.CreateMenuItemAsync();
                                     break;
                                 case "2":
-                                    id = await MenuCase2(menuServices);
+                                    id = await menuController.EditMenuItemAsync();
                                     break;
                                 case "3":
-                                    id = await MenuCase3(menuServices);
+                                    id = await menuController.RemoveMenuItemAsync();
                                     break;
                                 case "4":
-                                    menuServices.ShowAllMenuItems();
+                                    menuController.ShowAllMenuItemsAsync();
                                     break;
                                 case "5":
-                                    MenuCase5(menuServices);
+                                    menuController.ShowMenuItemsByCategoryAsync();
                                     break;
                                 case "6":
-                                    MenuCase6(menuServices);
+                                    menuController.ShowMenuItemsByPriceAsync();
                                     break;
                                 case "7":
-                                    MenuCase7(menuServices);
+                                    menuController.SearchByNameAsync();
                                     break;
                             }
                         } while (input2 != "0");
-
-
                         break;
                     case "2":
-                        Console.ForegroundColor = ConsoleColor.Blue;
-                        Console.WriteLine("1: Yeni sifariş əlavə et");
-                        Console.WriteLine("2: Sifarişi ləğv et");
-                        Console.WriteLine("3: Bütün sifarişləri göstər");
-                        Console.WriteLine("4: Verilən tarix aralığına görə sifarişləri göstər");
-                        Console.WriteLine("5: Verilən məbləğ aralığına görə sifarişləri göstər");
-                        Console.WriteLine("6: Verilmiş bir tarixdə olan sifarişlərini göstər");
-                        Console.WriteLine("7: Verilmiş nömrəyə görə sifarişin məlumatların göstər");
-                        Console.WriteLine("0: Ana Menyuya qayıt");
-                        Console.WriteLine("");
+                        MenuForOrderItem();
                         input2 = Console.ReadLine();
-                        OrderServices orderServices = new OrderServices(context);
+
 
                         switch (input2)
                         {
                             case "1":
-                                Console.ForegroundColor = ConsoleColor.Cyan;
-                                await orderServices.CreateOrder();
+                                await orderController.CreateOrderAsync();
                                 break;
                             case "2":
-                                Console.WriteLine("Silmək istədiyiniz Sifarişin nömrəsini daxil edin: ");
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                await orderServices.RemoveOrder(int.Parse(Console.ReadLine()));
-                                Console.ForegroundColor = ConsoleColor.Blue;
+                                await orderController.RemoveOrderAsync();
                                 break;
                             case "3":
-                                await orderServices.ShowAllOrders();
+                                await orderController.ShowAllOrdersAsync();
                                 break;
                             case "4":
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                Console.Write("ilk tarix (dd/MM/yyyy): ");
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                string beginningTimestr = Console.ReadLine();
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                Console.Write("son tarix (dd/MM/yyyy): ");
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                string endingTimestr = Console.ReadLine();
-
-                                if (DateTime.TryParseExact(beginningTimestr, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime beginningTime) && (DateTime.TryParseExact(endingTimestr, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime endingTime)))
-                                {
-                                    await orderServices.ShowOrdersByTimeInterval(beginningTime, endingTime);
-                                }
+                                await orderController.ShowOrdersByTimeIntervalAsync();
                                 break;
                             case "5":
-                                Console.WriteLine("Minimum qiymət");
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                float minPrice = float.Parse(Console.ReadLine());
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                Console.WriteLine("Maximum qiymət");
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                float maxPrice = float.Parse(Console.ReadLine());
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                orderServices.ShowOrderByTotalPrice(minPrice, maxPrice);
+                                await orderController.ShowOrdersByPriceIntervalAsync();
                                 break;
                             case "6":
-                                Console.Write("Tarixi daxil edin (dd/MM/yyyy): ");
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                string datestr = Console.ReadLine();
-                                Console.ForegroundColor = ConsoleColor.Blue;
-                                if (DateTime.TryParseExact(datestr, "dd/MM/yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime date))
-                                {
-
-                                    orderServices.ShowOrderByDate(date);
-                                }
+                                await orderController.ShowOrderByDateAsync();
                                 break;
                             case "7":
-                                Console.WriteLine("Sifarişin nömrəsini daxil edin!");
-                                Console.ForegroundColor = ConsoleColor.Magenta;
-                                orderServices.ShowOrderById(int.Parse(Console.ReadLine()));
-                                Console.ForegroundColor = ConsoleColor.Blue;
+
                                 break;
                         }
 
@@ -153,118 +95,40 @@ namespace Restaurant.App
                 }
             }
             while (input != "0");
-
-
-
         }
 
-
-        //MenuItem Cases
-        private static async void MenuCase7(MenuServices menuServices)
+        private static void MenuForOrderItem()
         {
-            Console.Write("Axtarış etmək istədiyiniz adı vəya teksti yazın: ");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            await menuServices.SearchByName(Console.ReadLine());
-
-
-        }
-
-        private static async void MenuCase6(MenuServices menuServices)
-        {
-            Console.WriteLine("Zəhmət olmasa max və min qiymətləri qeyd edin!");
-            Console.Write("Max dəyər: ");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            float max = float.Parse(Console.ReadLine());
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.Write("Min dəyər: ");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            float min = float.Parse(Console.ReadLine());
-
-            await menuServices.ShowMenuItemsByPrice(min, max);
-        }
-
-        private static async void MenuCase5(MenuServices menuServices)
-        {
-            Console.WriteLine("item lərini görmək istədiyiniz kateqoriyanı seçin!");
+            Console.WriteLine("1: Yeni sifariş əlavə et");
+            Console.WriteLine("2: Sifarişi ləğv et");
+            Console.WriteLine("3: Bütün sifarişləri göstər");
+            Console.WriteLine("4: Verilən tarix aralığına görə sifarişləri göstər");
+            Console.WriteLine("5: Verilən məbləğ aralığına görə sifarişləri göstər");
+            Console.WriteLine("6: Verilmiş bir tarixdə olan sifarişlərini göstər");
+            Console.WriteLine("7: Verilmiş nömrəyə görə sifarişin məlumatların göstər");
+            Console.WriteLine("0: Ana Menyuya qayıt");
             Console.WriteLine("");
-            Console.WriteLine("Kateqoriyalar");
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("1.Salad");
-            Console.WriteLine("2.Soup");
-            Console.WriteLine("3.Kebab");
-            Console.WriteLine("4.Sides");
-            Console.WriteLine("5.Pizza");
-            Console.WriteLine("6.Burger");
-            Console.WriteLine("7.Azerbaijani_dish");
-            Console.WriteLine("8.Drinks");
-            Console.WriteLine("9.Desserts");
-            int categoryNo = int.Parse(Console.ReadLine());
-            await menuServices.ShowMenuItemsByCategory(categoryNo);
         }
-
-        private static async Task<int> MenuCase3(MenuServices menuServices)
+        private static void MenuForMenuItem()
         {
-            int id;
-            Console.WriteLine("Silmək istədiyiniz itemin İD-sini qeyd edin!");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            id = int.Parse(Console.ReadLine());
-            await menuServices.RemoveMenuItem(id);
-            System.Threading.Thread.Sleep(2000);
-
-            return id;
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.WriteLine("1: Yeni item əlavə et");
+            Console.WriteLine("2: Item üzərində düzəliş et");
+            Console.WriteLine("3: Item Sil");
+            Console.WriteLine("4: Bütün itemləri göstər");
+            Console.WriteLine("5: Kategoriyaya görə itemləri göstər");
+            Console.WriteLine("6: Qiymət aralığına görə menu itemları göstər");
+            Console.WriteLine("7: Menu Itemlər ada görə axtarış et");
+            Console.WriteLine("0: Ana Menyuya qayıt");
+            Console.WriteLine("");
         }
-
-        private static async Task<int> MenuCase2(MenuServices menuServices)
+        private static void MainMenu()
         {
-            int id;
-            Console.WriteLine("Dəyişiklik etmək istədiyiniz itemin İD-sini qeyd edin!");
-            id = int.Parse(Console.ReadLine());
-            Console.WriteLine("Nə düzəliş etmək istəyirsiniz?");
-            Console.WriteLine("1.Ad");
-            Console.WriteLine("2.Qiymət");
-            Console.ForegroundColor = ConsoleColor.Magenta;
-            string case2Input = Console.ReadLine();
-            await menuServices.EditOnMenuItem(id, case2Input);
-            System.Threading.Thread.Sleep(2000);
-
-            return id;
-        }
-
-        private static async void MenuCase1(MenuServices menuServices)
-        {
-            Console.WriteLine("Item adı: ");
-            string name = Console.ReadLine();
-
-            Console.WriteLine("Qiymət: ");
-            float price = float.Parse(Console.ReadLine());
-
-            Console.WriteLine("Kateqoriyalar");
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("1.Salad");
-            Console.WriteLine("2.Soup");
-            Console.WriteLine("3.Kebab");
-            Console.WriteLine("4.Sides");
-            Console.WriteLine("5.Pizza");
-            Console.WriteLine("6.Burger");
-            Console.WriteLine("7.Azerbaijani_dish");
-            Console.WriteLine("8.Drinks");
-            Console.WriteLine("9.Desserts");
-            try
-            {
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                int inp = int.Parse(Console.ReadLine());
-                await menuServices.CreateMenuItem(name, price, inp);
-
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-            }
-            System.Threading.Thread.Sleep(2000);
-
-
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine("1: Menu üzərində əməliyyat");
+            Console.WriteLine("2: Sifarişlər üzərində əməliyyat");
+            Console.WriteLine("0: Sistemdən çıxmaq");
         }
     }
 }
