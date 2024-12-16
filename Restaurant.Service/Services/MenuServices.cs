@@ -1,4 +1,5 @@
-﻿using Restaurant.Core.Enums;
+﻿using Microsoft.IdentityModel.Tokens;
+using Restaurant.Core.Enums;
 using Restaurant.Core.Models;
 using Restaurant.DataAccess.Data;
 using Restaurant.Service.Exceptions;
@@ -11,6 +12,7 @@ public class MenuServices
         _context = context;
     }
 
+    #region Create,Edit,Remove Methods
     public async Task CreateMenuItemAsync(string name, float price, int categoryNo)
     {
         try
@@ -53,7 +55,7 @@ public class MenuServices
             {
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("");
-                Console.WriteLine($"{menuItem.Name} adlı item üzərində dəyişiklik edirsiniz!!! ");
+
 
                 Console.ForegroundColor = ConsoleColor.Blue;
             }
@@ -101,9 +103,6 @@ public class MenuServices
 
         await _context.SaveChangesAsync();
     }
-
-    
-
     public async Task RemoveMenuItemAsync(int id)
     {
         try
@@ -138,18 +137,18 @@ public class MenuServices
         }
         catch (Exception ex) { ExceptionMessage(ex); }
     }
-    public async Task ShowAllMenuItemsAsync()
+    #endregion
+
+    #region Show Methods
+    public async Task<List<MenuItem>> GetAllMenuItemsAsync()
     {
+        List<MenuItem> menuItemsList = new List<MenuItem>();
+
         try
         {
-            int cnt = 1;
             foreach (MenuItem menuItem in _context.MenuItems)
             {
-
-
-                cnt = await PrintMenuItemAttributes(cnt, menuItem);
-
-
+                menuItemsList.Add(menuItem);
             }
         }
         catch (Exception ex)
@@ -157,13 +156,16 @@ public class MenuServices
             ExceptionMessage(ex);
         }
 
+        return menuItemsList;
     }
-    public async Task ShowMenuItemsByCategoryAsync(int categoryNo)
-    {
 
+    public async Task<List<MenuItem>> GetMenuItemsByCategoryAsync(int categoryNo)
+    {
+        List<MenuItem> menuItems = new List<MenuItem>();
         try
         {
             Category category = CategoryCatalogSelection(categoryNo);
+            
 
             int cnt = 1;
             foreach (var menuItem in _context.MenuItems)
@@ -171,8 +173,7 @@ public class MenuServices
 
                 if (_context.MenuItems.Find(menuItem.Id).Category == category)
                 {
-                    cnt = await PrintMenuItemAttributes(cnt, menuItem);
-
+                    menuItems.Add(menuItem);
                 }
 
 
@@ -185,10 +186,15 @@ public class MenuServices
             ExceptionMessage(ex);
         }
 
+        return menuItems;
 
     }
-    public async Task ShowMenuItemsByPriceAsync(float min, float max)
+
+
+
+    public async Task<List<MenuItem>> GetMenuItemsByPriceAsync(float min, float max)
     {
+        List<MenuItem> menuItems = new List<MenuItem>();
         try
         {
             int cnt = 1;
@@ -199,39 +205,41 @@ public class MenuServices
 
                 if (menuItem.Price > min && menuItem.Price < max)
                 {
-                    cnt = await PrintMenuItemAttributes(cnt, menuItem);
+                    menuItems.Add(menuItem);
 
                 }
             }
-            Console.ForegroundColor = ConsoleColor.Red;
-            if (cnt == 1) Console.WriteLine("Bu qiymət aralığında İtem yoxdur");
+            
         }
         catch (Exception ex)
         {
             ExceptionMessage(ex);
         }
+        return menuItems;
 
-    }
-    public async Task SearchByNameAsync(string text)
+    } 
+    #endregion  
+    public async Task<List<MenuItem>> SearchByNameAsync(string text)
     {
+        List<MenuItem> menuItems = new List<MenuItem>();
         try
         {
             int cnt = 1;
             foreach (var menuItem in _context.MenuItems)
             {
-                if (menuItem.Name.Contains(text))
+                if (menuItem.Name.Contains(text) && !text.IsNullOrEmpty())
                 {
-                    cnt = await PrintMenuItemAttributes(cnt, menuItem);
+                    menuItems.Add(menuItem);
                 }
             }
-            Console.ForegroundColor = ConsoleColor.Red;
-            if (cnt == 1) throw new DoesNotExistException("Heçbir Məhsul tapılmadı!");
+            
         }
         catch (Exception ex)
         {
 
             ExceptionMessage(ex);
         }
+        return menuItems;
     }
 
 
@@ -241,7 +249,21 @@ public class MenuServices
     {
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine(ex.Message);
-        for (int i = 0; i < 5; i++)
+        for (int i = 0; i < 4; i++)
+        {
+            Thread.Sleep(500);
+            Console.Write(".");
+        }
+        Console.Clear();
+    }
+    private void SuccessfullMessage()
+    {
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.WriteLine("Uğurlu proses");
+        Console.ForegroundColor = ConsoleColor.Blue;
+
+
+        for (int i = 0; i < 4; i++)
         {
             Thread.Sleep(500);
             Console.Write(".");
@@ -272,20 +294,6 @@ public class MenuServices
             }
         
         
-    }
-    private static void SuccessfullMessage()
-    {
-        Console.ForegroundColor = ConsoleColor.Green;
-        Console.WriteLine("Uğurlu proses");
-        Console.ForegroundColor = ConsoleColor.Blue;
-
-
-        for (int i = 0; i < 5; i++)
-        {
-            Thread.Sleep(500);
-            Console.Write(".");
-        }
-        Console.Clear();
     }
     private static Category CategoryCatalogSelection(int categoryNo)
     {

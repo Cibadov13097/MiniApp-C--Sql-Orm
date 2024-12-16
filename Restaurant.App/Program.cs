@@ -45,13 +45,13 @@ namespace Restaurant.App
                                         id = await menuController.RemoveMenuItemAsync();
                                         break;
                                     case "4":
-                                        menuController.ShowAllMenuItemsAsync();
+                                        menuController.GetAllMenuItemsAsync();
                                         break;
                                     case "5":
-                                        menuController.ShowMenuItemsByCategoryAsync();
+                                        menuController.GetMenuItemsByCategoryAsync();
                                         break;
                                     case "6":
-                                        menuController.ShowMenuItemsByPriceAsync();
+                                        menuController.GetMenuItemsByPriceAsync();
                                         break;
                                     case "7":
                                         menuController.SearchByNameAsync();

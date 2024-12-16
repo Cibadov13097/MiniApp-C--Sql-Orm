@@ -5,11 +5,17 @@ namespace Restaurant.Service.Services
 {
     public class OrderServices
     {
+
+        #region Fields and Constructors
         private readonly RestaurantDB _context;
         public OrderServices(RestaurantDB context)
         {
             _context = context;
         }
+
+        #endregion
+
+        #region Create and Remove methods
         public async Task CreateOrderAsync()
         {
 
@@ -98,10 +104,9 @@ namespace Restaurant.Service.Services
                 YesNo:
                     Green();
                     Console.WriteLine("sifarişə digər məhsul əlavə edirsiniz? (Yes/No)");
-                    Blue();
-                    Console.ForegroundColor = ConsoleColor.Magenta;
+                    Magenta();
                     string YesNo = Console.ReadLine();
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Blue();
                     switch (YesNo)
                     {
                         case "Yes":
@@ -141,13 +146,9 @@ namespace Restaurant.Service.Services
 
             catch (Exception ex)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(ex.Message);
-                Console.WriteLine("");
-                Console.ForegroundColor = ConsoleColor.Blue;
+                ExceptionMessage(ex);
             }
         }
-
         public async Task RemoveOrderAsync(int id)
         {
             try
@@ -158,10 +159,12 @@ namespace Restaurant.Service.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ExceptionMessage(ex);
             }
         }
+        #endregion
 
+        #region Show Methods
         public async Task ShowAllOrdersAsync()
         {
             int num = 1;
@@ -208,11 +211,10 @@ namespace Restaurant.Service.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ExceptionMessage(ex);
             }
 
         }
-
         public async Task ShowOrdersByTimeIntervalAsync(DateTime beginingTime, DateTime endingTime)
         {
             int num = 1;
@@ -260,7 +262,7 @@ namespace Restaurant.Service.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ExceptionMessage(ex);
             }
         }
         public async Task ShowOrderByDateAsync(DateTime date)
@@ -311,10 +313,9 @@ namespace Restaurant.Service.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ExceptionMessage(ex);
             }
         }
-
         public async Task ShowOrderByTotalPriceAsync(float minPrice, float maxPrice)
         {
             int num = 1;
@@ -364,10 +365,9 @@ namespace Restaurant.Service.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ExceptionMessage(ex);
             }
         }
-
         public async Task ShowOrderByIdAsync(int orderId)
         {
             int num = 1;
@@ -416,14 +416,13 @@ namespace Restaurant.Service.Services
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.Message);
+                ExceptionMessage(ex);
             }
         }
+        #endregion
 
 
-
-
-        //Colors
+        #region Colors
         private void Green()
         {
             Console.ForegroundColor = ConsoleColor.Green;
@@ -451,6 +450,18 @@ namespace Restaurant.Service.Services
         private void Blue()
         {
             Console.ForegroundColor = ConsoleColor.Blue;
+        } 
+        #endregion
+        private void ExceptionMessage(Exception ex)
+        {
+            Red();
+            Console.WriteLine(ex.Message);
+            for (int i = 0; i < 4; i++)
+            {
+                Thread.Sleep(500);
+                Console.Write(".");
+            }
+            Console.Clear();
         }
 
     }
