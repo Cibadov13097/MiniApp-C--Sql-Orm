@@ -15,7 +15,7 @@ public class MenuServices
     {
         try
         {
-            SalaryCheck(price);
+            PriceCheck(price);
             NameCheck(name);
 
             Category category = CategoryCatalogSelection(categoryNo);
@@ -37,10 +37,8 @@ public class MenuServices
         }
         catch (Exception ex)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(ex.Message);
-            Console.WriteLine("");
-            Console.ForegroundColor = ConsoleColor.Blue;
+            ExceptionMessage(ex);
+            throw;
         }
 
     }
@@ -53,7 +51,7 @@ public class MenuServices
 
             if (menuItem != null)
             {
-                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("");
                 Console.WriteLine($"{menuItem.Name} adlı item üzərində dəyişiklik edirsiniz!!! ");
 
@@ -82,7 +80,7 @@ public class MenuServices
                     Console.WriteLine("İtemin yeni qiymətini təyin edin!");
                     Console.ForegroundColor = ConsoleColor.Magenta;
                     float newPrice = float.Parse(Console.ReadLine());
-                    SalaryCheck(newPrice);
+                    PriceCheck(newPrice);
                     menuItem.Price = newPrice;
                     break;
                 default:
@@ -96,16 +94,16 @@ public class MenuServices
         }
         catch (Exception ex)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(ex.Message);
-            Console.WriteLine("");
-            Console.ForegroundColor = ConsoleColor.Blue;
+            ExceptionMessage(ex);
             return;
         }
         SuccessfullMessage();
 
         await _context.SaveChangesAsync();
     }
+
+    
+
     public async Task RemoveMenuItemAsync(int id)
     {
         try
@@ -138,7 +136,7 @@ public class MenuServices
             }
             else throw new DoesNotExistException("Bu Id-li Item mövcud deyil!");
         }
-        catch (Exception ex) { Console.WriteLine(ex.Message); }
+        catch (Exception ex) { ExceptionMessage(ex); }
     }
     public async Task ShowAllMenuItemsAsync()
     {
@@ -156,7 +154,7 @@ public class MenuServices
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            ExceptionMessage(ex);
         }
 
     }
@@ -180,11 +178,11 @@ public class MenuServices
 
             }
             Console.ForegroundColor = ConsoleColor.Red;
-            if (cnt == 1) Console.WriteLine("Bu qiymət aralığında İtem yoxdur");
+            if (cnt == 1) Console.WriteLine("Bu kataloqa uyğun məhsul yoxdur");
         }
         catch (Exception ex)
         {
-            Console.WriteLine(ex.Message);
+            ExceptionMessage(ex);
         }
 
 
@@ -210,54 +208,84 @@ public class MenuServices
         }
         catch (Exception ex)
         {
-
-            Console.WriteLine($"{ex.Message}");
+            ExceptionMessage(ex);
         }
 
     }
     public async Task SearchByNameAsync(string text)
     {
-        int cnt = 1;
-        foreach (var menuItem in _context.MenuItems)
+        try
         {
-            if (menuItem.Name.Contains(text))
+            int cnt = 1;
+            foreach (var menuItem in _context.MenuItems)
             {
-                cnt = await PrintMenuItemAttributes(cnt, menuItem);
+                if (menuItem.Name.Contains(text))
+                {
+                    cnt = await PrintMenuItemAttributes(cnt, menuItem);
+                }
             }
+            Console.ForegroundColor = ConsoleColor.Red;
+            if (cnt == 1) throw new DoesNotExistException("Heçbir Məhsul tapılmadı!");
         }
-        Console.ForegroundColor = ConsoleColor.Red;
-        if (cnt == 1) Console.WriteLine("Bu ad-lı İtem mövcud deyil!");
+        catch (Exception ex)
+        {
+
+            ExceptionMessage(ex);
+        }
     }
 
 
 
     //subMethods
+    private void ExceptionMessage(Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine(ex.Message);
+        for (int i = 0; i < 5; i++)
+        {
+            Thread.Sleep(500);
+            Console.Write(".");
+        }
+        Console.Clear();
+    }
     private void NameCheck(string name)
     {
-        if (_context.MenuItems.Any(m => m.Name == name) || string.IsNullOrWhiteSpace(name))
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            throw new InvalidNameException("Eyni adlı item yaradıla bilməz vəya boş dəyər ola bilməz!");
+        
+            if (_context.MenuItems.Any(m => m.Name == name) || string.IsNullOrWhiteSpace(name))
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                throw new InvalidNameException("Eyni adlı item yaradıla bilməz vəya boş dəyər ola bilməz!");
 
-        }
+            }
+    
     }
-
-    private static void SalaryCheck(float price)
+    private void PriceCheck(float price)
     {
-        if (price <= 0)
-        {
-            Console.ForegroundColor = ConsoleColor.Red;
-            throw new InvalidSalaryException("Qiymət sıfır vəya sıfırdan kiçik ola bilməz!");
 
-        }
+
+        
+            if (price <= 0)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                throw new InvalidSalaryException("Qiymət sıfır vəya sıfırdan kiçik ola bilməz!");
+
+            }
+        
+        
     }
-
     private static void SuccessfullMessage()
     {
         Console.ForegroundColor = ConsoleColor.Green;
         Console.WriteLine("Uğurlu proses");
-        Console.WriteLine("");
         Console.ForegroundColor = ConsoleColor.Blue;
+
+
+        for (int i = 0; i < 5; i++)
+        {
+            Thread.Sleep(500);
+            Console.Write(".");
+        }
+        Console.Clear();
     }
     private static Category CategoryCatalogSelection(int categoryNo)
     {
@@ -275,7 +303,6 @@ public class MenuServices
             _ => throw new InvalidOperationException("Yanlış catalog seçimi")
         };
     }
-
     private async Task<int> PrintMenuItemAttributes(int cnt, MenuItem menuItem)
     {
         Console.ForegroundColor = ConsoleColor.Blue;

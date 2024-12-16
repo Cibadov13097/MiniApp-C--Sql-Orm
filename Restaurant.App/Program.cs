@@ -8,93 +8,99 @@ namespace Restaurant.App
 
         public static async Task Main(string[] args)
         {
-            Console.OutputEncoding = Encoding.UTF8;
-            Console.ForegroundColor = ConsoleColor.Blue;
-            string input = "";
-            string input2 = "";
-            Console.WriteLine("Salam hörmətli istifadəçi");
-            var context = new Restaurant.DataAccess.Data.RestaurantDB();
-            OrderServices orderServices = new OrderServices(context);
-            OrderController orderController = new OrderController(context);
-
-            MenuItemController menuController = new MenuItemController(context);
-            do
+            try
             {
-                MainMenu();
-                input = Console.ReadLine();
-                switch (input)
+
+                Console.OutputEncoding = Encoding.UTF8;
+                Console.ForegroundColor = ConsoleColor.Blue;
+                string input = "";
+                string input2 = "";
+                Console.WriteLine("Salam hörmətli istifadəçi");
+                var context = new Restaurant.DataAccess.Data.RestaurantDB();
+                OrderServices orderServices = new OrderServices(context);
+                OrderController orderController = new OrderController(context);
+                MenuItemController menuController = new MenuItemController(context);
+                do
                 {
-                    case "1":
-                        do
-                        {
-                            MenuForMenuItem();
+                    MainMenu();
+                    input = Console.ReadLine();
+                    switch (input)
+                    {
+                        case "1":
+                            do
+                            {
+                                MenuForMenuItem();
+                                input2 = Console.ReadLine();
+                                int id;
+                                MenuServices menuServices = new MenuServices(context);
+                                switch (input2)
+                                {
+                                    case "1":
+                                        menuController.CreateMenuItemAsync();
+                                        break;
+                                    case "2":
+                                        id = await menuController.EditMenuItemAsync();
+                                        break;
+                                    case "3":
+                                        id = await menuController.RemoveMenuItemAsync();
+                                        break;
+                                    case "4":
+                                        menuController.ShowAllMenuItemsAsync();
+                                        break;
+                                    case "5":
+                                        menuController.ShowMenuItemsByCategoryAsync();
+                                        break;
+                                    case "6":
+                                        menuController.ShowMenuItemsByPriceAsync();
+                                        break;
+                                    case "7":
+                                        menuController.SearchByNameAsync();
+                                        break;
+                                }
+                            } while (input2 != "0");
+                            break;
+                        case "2":
+                            MenuForOrderItem();
                             input2 = Console.ReadLine();
-                            int id;
-                            MenuServices menuServices = new MenuServices(context);
+
+
                             switch (input2)
                             {
                                 case "1":
-                                    menuController.CreateMenuItemAsync();
+                                    await orderController.CreateOrderAsync();
                                     break;
                                 case "2":
-                                    id = await menuController.EditMenuItemAsync();
+                                    await orderController.RemoveOrderAsync();
                                     break;
                                 case "3":
-                                    id = await menuController.RemoveMenuItemAsync();
+                                    await orderController.ShowAllOrdersAsync();
                                     break;
                                 case "4":
-                                    menuController.ShowAllMenuItemsAsync();
+                                    await orderController.ShowOrdersByTimeIntervalAsync();
                                     break;
                                 case "5":
-                                    menuController.ShowMenuItemsByCategoryAsync();
+                                    await orderController.ShowOrdersByPriceIntervalAsync();
                                     break;
                                 case "6":
-                                    menuController.ShowMenuItemsByPriceAsync();
+                                    await orderController.ShowOrderByDateAsync();
                                     break;
                                 case "7":
-                                    menuController.SearchByNameAsync();
+
                                     break;
                             }
-                        } while (input2 != "0");
-                        break;
-                    case "2":
-                        MenuForOrderItem();
-                        input2 = Console.ReadLine();
 
+                            break;
+                        case "0":
 
-                        switch (input2)
-                        {
-                            case "1":
-                                await orderController.CreateOrderAsync();
-                                break;
-                            case "2":
-                                await orderController.RemoveOrderAsync();
-                                break;
-                            case "3":
-                                await orderController.ShowAllOrdersAsync();
-                                break;
-                            case "4":
-                                await orderController.ShowOrdersByTimeIntervalAsync();
-                                break;
-                            case "5":
-                                await orderController.ShowOrdersByPriceIntervalAsync();
-                                break;
-                            case "6":
-                                await orderController.ShowOrderByDateAsync();
-                                break;
-                            case "7":
+                            break;
 
-                                break;
-                        }
-
-                        break;
-                    case "0":
-
-                        break;
-
+                    }
                 }
+                while (input != "0");
+            }catch(Exception ex)
+            {
+                ExceptionMessage(ex);
             }
-            while (input != "0");
         }
 
         private static void MenuForOrderItem()
@@ -130,5 +136,21 @@ namespace Restaurant.App
             Console.WriteLine("2: Sifarişlər üzərində əməliyyat");
             Console.WriteLine("0: Sistemdən çıxmaq");
         }
+
+        private static void ExceptionMessage(Exception ex)
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.WriteLine(ex.Message);
+            for (int i = 0; i < 5; i++)
+            {
+                Thread.Sleep(500);
+                Console.Write(".");
+            }
+            Console.Clear();
+        }
+
+
+
+
     }
 }
